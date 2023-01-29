@@ -1,0 +1,25 @@
+version: '3.5'
+
+services:
+  task_db:
+    image: postgres:alpine3.17
+    container_name: task_db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=0000
+      - POSTGRES_DB=task_db
+      - POSTGRES_HOST_AUTH_METHOD=trust
+
+  py_app:
+    container_name: task_app
+    stdin_open: true
+    depends_on:
+      - task_db
+    build: .
+    command: ./wait-for-postgres.sh task_db
+    environment:
+      - DB_PASSWORD=0000
+
